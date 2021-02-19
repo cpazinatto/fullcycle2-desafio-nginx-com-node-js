@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  nginx:
+    build:
+      context: nginx
+    image: cpazinatto/nginx
+    container_name: nginx
+    networks:
+      - server-network
+    ports:
+      - "8080:80"
+
+  app:
+    build: 
+      context: node
+    image: cpazinatto/node
+    container_name: app
+    tty: true
+    entrypoint: dockerize -wait tcp://db:3306 -timeout 30s docker-entrypoint.sh
+    networks: 
+      - server-network
+    depends_on: 
+      - db
+    command: node src/server.js
+
+  db:
+    build: 
+      context: mysql
+    image: cpazinatto/mysql
+    command: --innodb-use-native-aio=0
+    container_name: db
+    restart: always
+    tty: true
+    volumes:
+      - ./mysql/database:/var/lib/mysql
+    environment: 
+      - MYSQL_DATABASE=nodedb
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=root
+    networks: 
+      - server-network
+
+networks: 
+  server-network:
+    name: server-network
+    driver: bridge

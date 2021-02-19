@@ -1,3 +1,7 @@
+# Limpar
+.vscode
+mysql/database
+
 # Logs
 logs
 *.log
