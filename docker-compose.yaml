@@ -4,7 +4,6 @@ services:
   nginx:
     build:
       context: ./nginx
-    image: cpazinatto/nginx
     container_name: nginx
     networks:
       - server-network
@@ -18,7 +17,6 @@ services:
     restart: always
     build: 
       context: ./node
-    image: cpazinatto/node
     tty: true
     entrypoint: dockerize -wait tcp://db:3306 -timeout 30s docker-entrypoint.sh
     networks: 
@@ -30,7 +28,6 @@ services:
   db:
     build: 
       context: ./mysql
-    image: cpazinatto/mysql
     container_name: db
     restart: always
     tty: true
